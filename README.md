@@ -13,7 +13,7 @@ Mini plataforma de apoyos simbólicos tipo Ko-fi / Patreon, construida con Larav
 | Bridge | Inertia.js |
 | Estilos | Tailwind CSS + CSS Scoped |
 | Auth | Laravel Breeze (Vue + Inertia) |
-| Base de datos | MySQL |
+| Base de datos | SQLite |
 | Íconos | Lucide Vue Next |
 
 ---
@@ -36,11 +36,12 @@ Antes de instalar, asegurate de tener instalado:
 
 | Herramienta | Versión mínima | Verificar con |
 |---|---|---|
-| PHP |          8.2+           | `php -v` |
-| Composer|     2.x             | `composer -V` |
-| Node.js |     18+             | `node -v` |
-| npm |         9+              | `npm -v` |
-| MySQL |       8.x             | `mysql --version` |
+| PHP | 8.2+ | `php -v` |
+| Composer | 2.x | `composer -V` |
+| Node.js | 18+ | `node -v` |
+| npm | 9+ | `npm -v` |
+
+> ✅ No necesitás instalar MySQL. El proyecto usa **SQLite** que viene incluido con PHP.
 
 ---
 
@@ -59,17 +60,20 @@ app/
     ├── Link.php
     └── Support.php
 
-database/migrations/
-├── ..._create_creator_pages_table.php
-├── ..._create_links_table.php
-└── ..._create_supports_table.php
+database/
+├── migrations/
+│   ├── ..._create_creator_pages_table.php
+│   ├── ..._create_links_table.php
+│   └── ..._create_supports_table.php
+└── database.sqlite        ← archivo de base de datos (se crea automáticamente)
 
 resources/js/
 ├── Pages/
 │   ├── Dashboard.vue
 │   └── PublicProfile.vue
 └── Components/
-    └── SupportModal.vue
+    ├── SupportModal.vue
+    └── ConfirmModal.vue
 
 routes/
 └── web.php
@@ -116,8 +120,6 @@ composer install
 npm install
 ```
 
-> Esto incluye automáticamente `lucide-vue-next` y `@inertiajs/vue3`.
-
 ### 4. Configurar el entorno
 
 ```bash
@@ -125,30 +127,25 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-### 5. Crear la base de datos en MySQL
+### 5. Configurar el `.env`
 
-> ⚠️ Este paso es necesario antes de correr las migraciones.
-
-```bash
-mysql -u root -p
-```
-
-```sql
-CREATE DATABASE apoya_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-EXIT;
-```
-
-### 6. Configurar la conexión en `.env`
-
-Abrí el archivo `.env` y editá estas líneas:
+El proyecto usa **SQLite**. Verificá que tu `.env` tenga esto:
 
 ```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=apoya_dev
-DB_USERNAME=root
-DB_PASSWORD=tu_password
+DB_CONNECTION=sqlite
+```
+
+> ✅ No hace falta configurar host, puerto ni contraseña.
+> Laravel crea el archivo `database/database.sqlite` automáticamente.
+
+### 6. Crear el archivo de base de datos
+
+```bash
+# En Mac/Linux
+touch database/database.sqlite
+
+# En Windows (PowerShell)
+New-Item -Path database/database.sqlite -ItemType File
 ```
 
 ### 7. Correr las migraciones
@@ -183,8 +180,8 @@ La app estará disponible en: **http://localhost:8000**
 
 | Método | Ruta | Descripción | Auth |
 |---|---|---|---|
-| GET | `/@{slug}` | Página pública del creador | ❌ |
-| POST | `/@{slug}/support` | Enviar un apoyo | ❌ |
+| GET | `/@{slug}` |  — Página pública del creador | ❌ |
+| POST | `/@{slug}/support` | Se dispara desde el modal de apoyo | ❌ |
 | GET | `/dashboard` | Panel del creador | ✅ |
 | POST | `/creator-page` | Crear página de creador | ✅ |
 | PUT | `/creator-page` | Editar página de creador | ✅ |
@@ -225,17 +222,21 @@ La app estará disponible en: **http://localhost:8000**
 
 ---
 
-## 📹 Video demostración
+## 🤖 Herramientas de IA utilizadas
 
-[Canal de Youtube →](https://www.youtube.com/channel/UCWej7kWP6maAxuzf5fSRw9Q)
+- **Gemini (Google)** — para interpretar el enunciado del desafío y estructurar el prompt inicial
+- **Claude (Anthropic)** — migraciones, modelos, controladores, rutas y componentes Vue
 
 ---
 
-## 👨‍💻 Autora
+## 📹 Video demostración
+
+[Ver en YouTube →](https://www.youtube.com/channel/UCWej7kWP6maAxuzf5fSRw9Q)
+
+---
+
+## 👩‍💻 Autora
 
 **vannyaVersalovic** — [github.com/vannyaVersalovic](https://github.com/vannyaVersalovic)
 
-Desarrollado como desafío técnico para eSponsor.  
-**Construido con asistencia de IA (Claude — Anthropic).**
-**Gemini (Google)** — para interpretar el enunciado del desafío 
-  y estructurar el prompt inicial de desarrollo
+Desarrollado como desafío técnico para eSponsor.
