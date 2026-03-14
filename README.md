@@ -231,7 +231,7 @@ La app estará disponible en: **http://localhost:8000**
 
 ## 📹 Video demostración
 
-[Ver en YouTube →](https://www.youtube.com/channel/UCWej7kWP6maAxuzf5fSRw9Q)
+[Ver en YouTube →](https://youtu.be/8H7Um7neOwk)
 
 ---
 
